@@ -37,6 +37,22 @@ let verificaAdminRol = (req, res, next) => {
     }
 };
 
+let verificaAdminGADRol = (req, res, next) => {
+    
+    let usuario = req.usuario;
+
+    if (usuario.rol === 'adminGAD') {
+        next();
+    } else {
+        return res.json({
+            ok: false,
+            err: {
+                mensaje: 'El usuario no tienen privilegios de administrador de GAD.'
+            }
+        });
+    }
+};
+
 let verificaCedula = (req, res, next) => {
     let body = req.body;
 
@@ -59,5 +75,6 @@ let verificaCedula = (req, res, next) => {
 module.exports = {
     verificaToken,
     verificaAdminRol,
+    verificaAdminGADRol,
     verificaCedula
 }

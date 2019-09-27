@@ -79,8 +79,6 @@ app.post('/personalSalud', [verificaToken, verificaAdminRol, verificaCedula], (r
                 });
             }
 
-            personalSalud.populate('Usuarios');
-
             res.json({
                 ok: true,
                 mensaje: 'Creación de personal de salud exitosa.'
