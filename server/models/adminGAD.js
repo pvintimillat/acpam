@@ -21,11 +21,6 @@ let adminGADSchema = new Schema({
         //unique: true,
         required: [true, 'El documento de identidad del personal de salud es obligatorio.']
     },
-    email: {
-        type: String,
-        unique: true,
-        required: [true, 'El correo electrónico del personal de salud es obligatorio.']
-    },
     celular: {
         type: String,
         //unique: true,
@@ -35,13 +30,9 @@ let adminGADSchema = new Schema({
         type: String,
         required: false
     },
-    rol: {
-        type: String,
-        required: true,
-    },
-    estado: {
-        type: Boolean,
-        default: true,
+    usuario: {
+        type: Schema.Types.ObjectId,
+        ref: 'Usuarios'
     }
 });
 

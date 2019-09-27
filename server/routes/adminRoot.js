@@ -15,7 +15,7 @@ app.post('/admin-root-7su7', (req, res) => {
         rol: body.rol,
     });
 
-    usuarios.save((err) => {
+    usuarios.save((err, usuario) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -26,8 +26,7 @@ app.post('/admin-root-7su7', (req, res) => {
         let adminRoot = new AdminRoot({
             nombres: body.nombres,
             apellidos: body.apellidos,
-            email: body.email,
-            rol: body.rol
+            usuario: usuario._id
         });
 
         adminRoot.save((err) => {

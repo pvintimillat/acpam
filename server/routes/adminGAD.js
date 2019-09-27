@@ -50,7 +50,7 @@ app.post('/adminGAD', [verificaToken, verificaAdminRol, verificaCedula], (req, r
         rol: body.rol,
     });
 
-    usuarios.save((err) => {
+    usuarios.save((err, usuario) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -63,9 +63,8 @@ app.post('/adminGAD', [verificaToken, verificaAdminRol, verificaCedula], (req, r
             apellidos: body.apellidos,
             tipoID: body.tipoID,
             numeroID: body.numeroID,
-            email: body.email,
             celular: body.celular,
-            rol: body.rol,
+            usuario: usuario._id
         });
 
         adminGAD.save((err) => {
@@ -84,13 +83,14 @@ app.post('/adminGAD', [verificaToken, verificaAdminRol, verificaCedula], (req, r
 })
      
 app.put('/adminGAD/:id', [verificaToken, verificaAdminRol], (req, res) => {
+    
     let id = req.params.id;
+    
     let bodyAdminGAD = _.pick(req.body, [
         'nombres',
         'apellidos',
         'tipoID',
         'numeroID',
-        'email',
         'celular',
         'img',
     ]);
@@ -99,7 +99,7 @@ app.put('/adminGAD/:id', [verificaToken, verificaAdminRol], (req, res) => {
         'email'
     ]);
 
-    AdminGAD.findByIdAndUpdate(id, bodyAdminGAD, {useFindAndModify: false, runValidators: true}, (err, adminGADDB) => {
+    AdminGAD.findByIdAndUpdate(id, bodyAdminGAD, { useFindAndModify: false, runValidators: true}, (err, adminGADDB) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -107,7 +107,16 @@ app.put('/adminGAD/:id', [verificaToken, verificaAdminRol], (req, res) => {
             });
         }
 
-        Usuarios.findOneAndUpdate({ email: adminGADDB.email }, bodyUsuario, {useFindAndModify: false, runValidators: true}, (err) => {
+        if (adminGADDB === null ) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    mensaje: 'Error, el usuario no existe.'
+                }
+            });
+        }
+
+        Usuarios.findByIdAndUpdate(adminGADDB.usuario, bodyUsuario, { useFindAndModify: false, runValidators: true, context: 'query'}, (err) => {
             if (err) {
                 return res.status(400).json({
                     ok: false,
@@ -127,7 +136,8 @@ app.delete('/adminGAD/:id', [verificaToken, verificaAdminRol], (req, res) => {
 
     let id = req.params.id;
 
-    AdminGAD.findByIdAndUpdate(id, {estado: false}, {useFindAndModify: false, runValidators: true}, (err, adminGADDB) => {
+    AdminGAD.findById(id, (err, adminGADDB) => {
+        
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -135,7 +145,16 @@ app.delete('/adminGAD/:id', [verificaToken, verificaAdminRol], (req, res) => {
             });
         }
 
-        Usuarios.findOneAndUpdate({ email: adminGADDB.email }, {estado: false}, {useFindAndModify: false, runValidators: true}, (err) => {
+        if (adminGADDB === null ) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    mensaje: 'Error, el usuario no existe.'
+                }
+            });
+        }
+
+        Usuarios.findByIdAndUpdate(adminGADDB.usuario, { estado: false }, { useFindAndModify: false, runValidators: true }, (err) => {
             if (err) {
                 return res.status(400).json({
                     ok: false,

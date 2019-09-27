@@ -12,18 +12,9 @@ let adminRootSchema = new Schema({
         type: String,
         required: [true, 'El apellido del personal de salud es obligatorio.']
     },
-    email: {
-        type: String,
-        unique: true,
-        required: [true, 'El correo electrónico del personal de salud es obligatorio.']
-    },
-    rol: {
-        type: String,
-        required: true,
-    },
-    estado: {
-        type: Boolean,
-        default: true,
+    usuario: {
+        type: Schema.Types.ObjectId,
+        ref: 'Usuarios'
     }
 });
 

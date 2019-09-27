@@ -58,8 +58,6 @@ app.post('/personalSalud', [verificaToken, verificaAdminRol, verificaCedula], (r
             });
         }
 
-        console.log(usuario._id);
-
         let personalSalud = new PersonalSalud({
             nombres: body.nombres,
             apellidos: body.apellidos,
@@ -68,10 +66,9 @@ app.post('/personalSalud', [verificaToken, verificaAdminRol, verificaCedula], (r
             estudios: body.estudios,
             especialidad: body.especialidad,
             senescyt: body.senescyt,
-            email: body.email,
             celular: body.celular,
             consultorio: body.consultorio,
-            rol: body.rol,
+            usuario: usuario._id
         });
 
         personalSalud.save((err) => {
@@ -81,6 +78,8 @@ app.post('/personalSalud', [verificaToken, verificaAdminRol, verificaCedula], (r
                     err
                 });
             }
+
+            personalSalud.populate('Usuarios');
 
             res.json({
                 ok: true,
@@ -92,14 +91,13 @@ app.post('/personalSalud', [verificaToken, verificaAdminRol, verificaCedula], (r
 
 app.put('/personalSalud/:id', [verificaToken, verificaAdminRol], (req, res) => {
     let id = req.params.id;
-    
+  
     let bodyPersonalSalud = _.pick(req.body, [
         'nombres',
         'apellidos',
         'tipoID',
         'numeroID',
         'senescyt',
-        'email',
         'celular',
         'consultorio',
         'img',
@@ -109,7 +107,8 @@ app.put('/personalSalud/:id', [verificaToken, verificaAdminRol], (req, res) => {
         'email'
     ]);
 
-    PersonalSalud.findByIdAndUpdate(id, bodyPersonalSalud, { useFindAndModify: false, runValidators: true }, (err, personalSaludDB) => {
+    PersonalSalud.findByIdAndUpdate(id, bodyPersonalSalud, { useFindAndModify: false, runValidators: true}, (err, personalSaludDB) => {
+        
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -117,14 +116,22 @@ app.put('/personalSalud/:id', [verificaToken, verificaAdminRol], (req, res) => {
             });
         }
 
-        Usuarios.findOneAndUpdate({ email: personalSaludDB.email }, bodyUsuario, { useFindAndModify: false, runValidators: true }, (err) => {
+        if (personalSaludDB === null ) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    mensaje: 'Error, el usuario no existe.'
+                }
+            });
+        }
+
+        Usuarios.findByIdAndUpdate(personalSaludDB.usuario, bodyUsuario, { useFindAndModify: false, runValidators: true, context: 'query'}, (err) => {
             if (err) {
                 return res.status(400).json({
                     ok: false,
                     err
                 });
             }
-
             res.json({
                 ok: true,
                 mensaje: 'Actualización de personal de salud exitosa.'
@@ -136,23 +143,31 @@ app.put('/personalSalud/:id', [verificaToken, verificaAdminRol], (req, res) => {
 app.delete('/personalSalud/:id', [verificaToken, verificaAdminRol], (req, res) => {
 
     let id = req.params.id;
-
-    PersonalSalud.findByIdAndUpdate(id, { estado: false }, { useFindAndModify: false, runValidators: true }, (err, personalSaludDB) => {
+    
+    PersonalSalud.findById(id, (err, personalSaludDB) => {
+        
         if (err) {
             return res.status(400).json({
                 ok: false,
                 err
             });
         }
-
-        Usuarios.findOneAndUpdate({ email: personalSaludDB.email }, { estado: false }, { useFindAndModify: false, runValidators: true }, (err) => {
+        
+        if (personalSaludDB === null ) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    mensaje: 'Error, el usuario no existe.'
+                }
+            });
+        }
+        Usuarios.findByIdAndUpdate(personalSaludDB.usuario, { estado: false }, { useFindAndModify: false, runValidators: true }, (err) => {
             if (err) {
                 return res.status(400).json({
                     ok: false,
                     err
                 });
             }
-
             res.json({
                 ok: true,
                 mensaje: 'Eliminación de personal de salud exitosa.'

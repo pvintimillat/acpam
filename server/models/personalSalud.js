@@ -42,11 +42,6 @@ let personalSaludSchema = new Schema({
         //unique: true,
         default: 'Información no disponible',
     },
-    email: {
-        type: String,
-        //unique: true,
-        required: [true, 'El correo electrónico del personal de salud es obligatorio.']
-    },
     celular: {
         type: String,
         //unique: true,
@@ -60,13 +55,9 @@ let personalSaludSchema = new Schema({
         type: String,
         required: false
     },
-    rol: {
-        type: String,
-        required: true
-    },
-    estado: {
-        type: Boolean,
-        default: true,
+    usuario: {
+        type: Schema.Types.ObjectId,
+        ref: 'Usuarios'
     }
 });
 
