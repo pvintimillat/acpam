@@ -13,7 +13,7 @@ app.get('/personalSalud', verificaToken, (req, res) => {
     let desde = Number(req.query.desde || 0);
     let limite = Number(req.query.limite || 5);
 
-    PersonalSalud.find({ estado: true })
+    PersonalSalud.find({})
         .skip(desde)
         .limit(limite)
         .exec((err, usuariosPersonalSalud) => {
@@ -24,7 +24,7 @@ app.get('/personalSalud', verificaToken, (req, res) => {
                 });
             }
 
-            PersonalSalud.countDocuments({ estado: true }, (err, conteo) => {
+            PersonalSalud.countDocuments({}, (err, conteo) => {
                 if (err) {
                     return res.status(501).json({
                         ok: false,

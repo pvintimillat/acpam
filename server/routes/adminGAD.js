@@ -13,7 +13,7 @@ app.get('/adminGAD', verificaToken, (req, res) => {
     let desde = Number(req.query.desde || 0);
     let limite = Number(req.query.limite || 5);
 
-    AdminGAD.find({estado: true})
+    AdminGAD.find({})
         .skip(desde)
         .limit(limite)
         .exec((err, usuariosAdminGAD) => {
@@ -24,7 +24,7 @@ app.get('/adminGAD', verificaToken, (req, res) => {
                 });
             }
 
-            AdminGAD.countDocuments({estado: true}, (err, conteo) => {
+            AdminGAD.countDocuments({}, (err, conteo) => {
                 if (err) {
                     return res.status(501).json({
                         ok: false,
