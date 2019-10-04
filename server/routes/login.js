@@ -47,48 +47,6 @@ app.post('/login', (req, res) => {
             usuario: usuarioDB,
             token
         })
-
-        // if (usuarioDB.rol === 'adminRoot') {
-        //     AdminRoot.findOne({email: usuarioDB.email, estado: true}, {useFindAndModify: false}, (err, adminRootDB) => {
-        //         if (err) {
-        //             return res.status(500).json({
-        //                 ok: false,
-        //                 err
-        //             }); 
-        //         }
-
-        //         let token = jwt.sign({
-        //             usuario: usuarioDB
-        //         }, process.env.SEED, {expiresIn: process.env.CADUCIDAD_TOKEN});
-
-        //         res.json({
-        //             ok: true,
-        //             usuario: adminRootDB,
-        //             token
-        //         })
-        //     });
-        // }
-
-        // if (usuarioDB.rol === 'personalSalud') {
-        //     PersonalSalud.findOne({email: usuarioDB.email, estado: true}, {useFindAndModify: false}, (err, personalSaludDB) => {
-        //         if (err) {
-        //             return res.status(500).json({
-        //                 ok: false,
-        //                 err
-        //             }); 
-        //         }
-
-        //         let token = jwt.sign({
-        //             usuario: usuarioDB
-        //         }, process.env.SEED, {expiresIn: process.env.CADUCIDAD_TOKEN});
-
-        //         res.json({
-        //             ok: true,
-        //             usuario: personalSaludDB,
-        //             token
-        //         })
-        //     });
-        // }
     });
 });
 

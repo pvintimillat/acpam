@@ -14,7 +14,6 @@ app.use(require('./routes/index'));
  
 mongoose.connect('mongodb://localhost:27017/acpam', {useNewUrlParser: true,useUnifiedTopology: true, useCreateIndex: true}, (err) => {
     if (err) throw err;
-
     console.log('Base de datos ONLINE');
 });   
  

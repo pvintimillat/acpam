@@ -16,6 +16,7 @@ app.get('/adminGAD', verificaToken, (req, res) => {
     AdminGAD.find({})
         .skip(desde)
         .limit(limite)
+        .populate({path: 'usuario', match: {estado: true}})
         .exec((err, usuariosAdminGAD) => {
             if (err) {
                 return res.status(400).json({
@@ -24,13 +25,18 @@ app.get('/adminGAD', verificaToken, (req, res) => {
                 });
             }
 
-            AdminGAD.countDocuments({}, (err, conteo) => {
+            AdminGAD.countDocuments({rol: 'personalSalud', estado: true}, (err, conteo) => {
                 if (err) {
                     return res.status(501).json({
                         ok: false,
                         err
                     });
                 }
+
+                usuariosAdminGAD = usuariosAdminGAD.filter(function(usuarioAdminGAD) {
+                    return usuarioAdminGAD.usuario; // return only users with email matching 'type: "Gmail"' query
+                });
+
                 res.json({
                     ok: true,
                     usuarios: usuariosAdminGAD,

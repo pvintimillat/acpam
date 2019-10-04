@@ -16,6 +16,7 @@ app.get('/personalSalud', verificaToken, (req, res) => {
     PersonalSalud.find({})
         .skip(desde)
         .limit(limite)
+        .populate({path: 'usuario', match: {estado: true}})
         .exec((err, usuariosPersonalSalud) => {
             if (err) {
                 return res.status(400).json({
@@ -24,13 +25,18 @@ app.get('/personalSalud', verificaToken, (req, res) => {
                 });
             }
 
-            PersonalSalud.countDocuments({}, (err, conteo) => {
+            Usuarios.countDocuments({rol: 'personalSalud', estado: true}, (err, conteo) => {
                 if (err) {
                     return res.status(501).json({
                         ok: false,
                         err
                     });
                 }
+                
+                usuariosPersonalSalud = usuariosPersonalSalud.filter(function(usuarioPersonalSalud) {
+                    return usuarioPersonalSalud.usuario; 
+                });
+
                 res.json({
                     ok: true,
                     usuarios: usuariosPersonalSalud,
