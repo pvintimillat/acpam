@@ -17,6 +17,11 @@ let personalSaludSchema = new Schema({
         type: String,
         required: [true, 'El apellido del personal de salud es obligatorio.']
     },
+    email: {
+        type: String,
+        unique: true,
+        required: [true, 'El correo electrónico del personal de salud es obligatorio.']
+    },
     tipoID: {
         type: String,
         required: [true, 'El documento de identidad del personal de salud es obligatorio.']
@@ -60,14 +65,6 @@ let personalSaludSchema = new Schema({
         ref: 'Usuarios'
     }
 });
-
-personalSaludSchema.methods.toJSON = function() {
-    let user = this;
-    let userObject = user.toObject();
-    delete userObject.password;
-
-    return userObject;
-}
 
 personalSaludSchema.plugin(uniqueValidator, {message: '{Es obligatorio que el valor de {PATH} sea único.'});
 

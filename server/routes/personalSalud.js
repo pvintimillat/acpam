@@ -12,8 +12,9 @@ app.get('/personalSalud', verificaToken, (req, res) => {
 
     let desde = Number(req.query.desde || 0);
     let limite = Number(req.query.limite || 5);
+    let tipoEspecialidad = req.query.especialidad;
 
-    PersonalSalud.find({})
+    PersonalSalud.find({especialidad: tipoEspecialidad})
         .skip(desde)
         .limit(limite)
         .populate({path: 'usuario', match: {estado: true}})
@@ -25,25 +26,26 @@ app.get('/personalSalud', verificaToken, (req, res) => {
                 });
             }
 
-            Usuarios.countDocuments({rol: 'personalSalud', estado: true}, (err, conteo) => {
+            Usuarios.countDocuments({path: 'usuario', match: {estado: true}}, (err, conteo) => {
                 if (err) {
                     return res.status(501).json({
                         ok: false,
                         err
                     });
                 }
-                
-                usuariosPersonalSalud = usuariosPersonalSalud.filter(function(usuarioPersonalSalud) {
-                    return usuarioPersonalSalud.usuario; 
-                });
 
-                res.json({
-                    ok: true,
-                    usuarios: usuariosPersonalSalud,
-                    conteo
+               
+                    usuariosPersonalSalud = usuariosPersonalSalud.filter(function(usuarioPersonalSalud) {
+                        return usuarioPersonalSalud.usuario; 
+                    });
+
+                    res.json({
+                        ok: true,
+                        usuarios: usuariosPersonalSalud,
+                        total: conteo
+                    
                 });
             });
-
         });
 });
 
@@ -67,6 +69,7 @@ app.post('/personalSalud', [verificaToken, verificaAdminRol, verificaCedula], (r
         let personalSalud = new PersonalSalud({
             nombres: body.nombres,
             apellidos: body.apellidos,
+            email: body.email,
             tipoID: body.tipoID,
             numeroID: body.numeroID,
             estudios: body.estudios,
@@ -87,6 +90,7 @@ app.post('/personalSalud', [verificaToken, verificaAdminRol, verificaCedula], (r
 
             res.json({
                 ok: true,
+                usuario,
                 mensaje: 'Creación de personal de salud exitosa.'
             });
         });
