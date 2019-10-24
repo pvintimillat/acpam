@@ -11,7 +11,7 @@ const app = express();
 app.get('/personalSalud', verificaToken, (req, res) => {
 
     let desde = Number(req.query.desde || 0);
-    let limite = Number(req.query.limite || 5);
+    let limite = Number(req.query.limite || 10);
     let tipoEspecialidad = req.query.especialidad;
 
     PersonalSalud.find({especialidad: tipoEspecialidad})

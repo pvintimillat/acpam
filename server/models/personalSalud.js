@@ -58,7 +58,8 @@ let personalSaludSchema = new Schema({
     },
     img: {
         type: String,
-        required: false
+        required: false,
+        default: 'image-acpam'
     },
     usuario: {
         type: Schema.Types.ObjectId,
